@@ -1,0 +1,8 @@
+Expo Go Quickstart guide was used
+
+npx create-expo-app BasicApp
+
+
+android studio + emulator are installed and added to Path
+
+start expo webserver and start android emulator trought the console
