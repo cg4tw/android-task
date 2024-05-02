@@ -1,31 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+//import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+var type='';
+var key='';
 
 export default function App() {
-
-  const authorization ="Basic QVBJX0V4cGxvcmVyOjEyMzQ1NmlzQUxhbWVQYXNz";
-
-  const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 
-               'Authorization': authorization},
-    body: JSON.stringify({"username":"365", "password":"1"})
-  }
-
-
   getKey();
-
+  getData();
+  //return <SafeAreaProvider>...</SafeAreaProvider>;
   return (
-
     <View style={styles.container}>
       <Text>authorization</Text>
-
+    
       <StatusBar style="auto" />
     </View>
-
   );
-
 }
 
 const styles = StyleSheet.create({
@@ -38,16 +28,52 @@ const styles = StyleSheet.create({
 });
 
   //Fetch Method for verification key
-  async function getKey(){
+  function getKey(){
+    const  requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 
+                 'Authorization': 'Basic QVBJX0V4cGxvcmVyOjEyMzQ1NmlzQUxhbWVQYXNz'},
+      body: JSON.stringify({"username":"365", "password":"1"})
+    }
     
-    fetch("https://api.baubuddy.de/index.php/login",requestOptions)
-      .then(response => response.json().oauth)
-      authorization = response;
+    fetch("https://api.baubuddy.de/index.php/login",{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 
+                 'Authorization': 'Basic QVBJX0V4cGxvcmVyOjEyMzQ1NmlzQUxhbWVQYXNz'},
+      body: JSON.stringify({"username":"365", "password":"1"})
+    })
+      .then(response => response.json())
+      .then(data=>{
+        requestOptions.headers.Authorization =data.oauth.token_type + " " + data.oauth.access_token;
+        type=data.oauth.token_type;
+        key=data.oauth.access_token;
+      })
+      .catch(error => console.error('Error:', error));
 }
 
+
 //Fetch Method for data
-async function getData(){
-  fetch("https://api.baubuddy.de/index.php/login",requestOptions)
+function getData(){
+
+  const  requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 
+               'Authorization': type+" "+key},
+    body: JSON.stringify({"username":"365", "password":"1"})
+  }
+  fetch("https://api.baubuddy.de/dev/index.php/v1/tasks/select",{
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 
+               'Authorization': type+" "+key},
+    body: JSON.stringify({"username":"365", "password":"1"})
+  })
+  
+  .then(response => response.json())
+  .then(data=>{
+        console.log(data);
+      })
+      .catch(error => console.error('Error:', error));
+
 }
 
 
