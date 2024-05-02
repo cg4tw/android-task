@@ -29,14 +29,8 @@ const styles = StyleSheet.create({
 
   //Fetch Method for verification key
   function getKey(){
-    const  requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 
-                 'Authorization': 'Basic QVBJX0V4cGxvcmVyOjEyMzQ1NmlzQUxhbWVQYXNz'},
-      body: JSON.stringify({"username":"365", "password":"1"})
-    }
     
-    fetch("https://api.baubuddy.de/index.php/login",{
+    fetch("https://api.baubuddy.de/dev/index.php/login",{
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 
                  'Authorization': 'Basic QVBJX0V4cGxvcmVyOjEyMzQ1NmlzQUxhbWVQYXNz'},
@@ -44,7 +38,6 @@ const styles = StyleSheet.create({
     })
       .then(response => response.json())
       .then(data=>{
-        requestOptions.headers.Authorization =data.oauth.token_type + " " + data.oauth.access_token;
         type=data.oauth.token_type;
         key=data.oauth.access_token;
       })
@@ -55,12 +48,7 @@ const styles = StyleSheet.create({
 //Fetch Method for data
 function getData(){
 
-  const  requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 
-               'Authorization': type+" "+key},
-    body: JSON.stringify({"username":"365", "password":"1"})
-  }
+
   fetch("https://api.baubuddy.de/dev/index.php/v1/tasks/select",{
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 
@@ -70,7 +58,10 @@ function getData(){
   
   .then(response => response.json())
   .then(data=>{
+        console.log(data.debug.source);
         console.log(data);
+
+
       })
       .catch(error => console.error('Error:', error));
 
