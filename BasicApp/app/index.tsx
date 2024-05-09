@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { FlatList, Text, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { FlatList, Text, View, TextInput } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react'; 
 
@@ -41,7 +41,9 @@ import React, { useState } from 'react';
 
 export default function Index() {
   //Initial start of the app
-  const [data, setData] = React.useState(null);
+  const [data, setData] = React.useState<any[]>([]);
+
+  const [filterText, setFilterText] = React.useState('');
 
   React.useEffect(() => {
     // Call getData and getSavedData inside useEffect
@@ -50,26 +52,40 @@ export default function Index() {
     });
   }, []);
 
+
+  const filteredData = data?.filter(item => 
+    Object.values(item).some(value => 
+      String(value).toLowerCase().includes(filterText.toLowerCase())
+    )
+  );
+
   return (
 
     <SafeAreaProvider>
+      
+      <SafeAreaView style={{ backgroundColor: '#f8f8f8' }}>
+        <TextInput
+          value={filterText}
+          onChangeText={setFilterText}
+          placeholder="Filter"
+          style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+        />
+      </SafeAreaView>
       <View>
-      <Text>authorization</Text>
-      {data && (
+
+{filteredData && (
           <FlatList
-            data={data}
+            data={filteredData}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
-                   
               <View style={{ padding: 10, margin: 10, backgroundColor: item.colorCode }}>
-              <Text>{item.task}</Text>
-              <Text>{item.title}</Text>
-              <Text>{item.description}</Text>
-            </View>
+               <Text>{item.task}</Text>
+               <Text>{item.title}</Text>
+               <Text>{item.description}</Text>
+              </View>
             )}
           />
         )}
-      <StatusBar style="auto" />
     </View>
     </SafeAreaProvider>
 
