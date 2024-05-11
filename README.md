@@ -21,3 +21,4 @@ pull to refresh:
 ![Screenshot 2024-05-11 220128](https://github.com/cg4tw/android-task/assets/95609934/562cc2bc-3870-4afe-8cd1-19a834d52a26)
 
 Worker that calls API every hour:
+![Screenshot 2024-05-11 223753](https://github.com/cg4tw/android-task/assets/95609934/71efa975-8929-439e-bfbe-dc0cc1055d99)
