@@ -22,3 +22,5 @@ pull to refresh:
 
 Worker that calls API every hour:
 ![Screenshot 2024-05-11 223753](https://github.com/cg4tw/android-task/assets/95609934/71efa975-8929-439e-bfbe-dc0cc1055d99)
+
+Asyncronous storage is implemented and seems to work as intended.
