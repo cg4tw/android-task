@@ -5,22 +5,19 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Camera } from 'expo-camera';
 import React, { useState, useEffect} from 'react'; 
 
-
+//allows for inputing got data from getKey into getFetch
   let type:string = '';
   let key:string = '';
-  let requestOptions:object = {};
-  let intervalId: NodeJS.Timeout;
-  const styles = StyleSheet.create({
-    container: {
-      flex: 0,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'white',
-      zIndex: 1,
-      }
-    }
-  );
 
+  //requestOptions for fetch of getData
+  let requestOptions:object = {};
+
+  //intervalId for interval of fetching data
+  let intervalId: NodeJS.Timeout;
+
+
+
+//Local data storage
   const storeData = async (value:object) => {
     try {
       const jsonValue = JSON.stringify(value);
@@ -38,6 +35,8 @@ import React, { useState, useEffect} from 'react';
       // error reading value
     }
   };
+
+
     //getKey getData and update local storage
     getData();
 
@@ -49,18 +48,20 @@ import React, { useState, useEffect} from 'react';
 
 
 export default function Index() {
-  //Initial start of the app
   const [data, setData] = React.useState<any[]>([]);
   const [filterText, setFilterText] = React.useState('');
   const [isScannerVisible, setScannerVisible] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [refreshing, setRefreshing] = React.useState(false);
+
+  //QR Code Scanner
   const handleBarCodeScanned = ({ type, data }:  { type: string, data: string }) => {
     setScannerVisible(false);
     setFilterText(data);
     console.log(data);
   };
 
+  //Refresh data
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getData().then(() => {
@@ -88,12 +89,14 @@ export default function Index() {
     return () => clearInterval(intervalId);
   }, []);
 
+  //Filter data
   const filteredData = data?.filter(item => 
     Object.values(item).some(value => 
       String(value).toLowerCase().includes(filterText.toLowerCase())
     )
   );
 
+  //QR Code Scanner Permissions
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -106,6 +109,7 @@ export default function Index() {
   }, []);
 
   return (
+    //View
     <SafeAreaProvider>
       <SafeAreaView style={{ backgroundColor: '#f8f8f8' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -133,6 +137,7 @@ export default function Index() {
         }}/>
       </SafeAreaView>
       <SafeAreaView>
+        
 {filteredData && (
      <FlatList
         data={filteredData}
@@ -153,7 +158,7 @@ export default function Index() {
       />
         )}
     </SafeAreaView>
-       
+    
     {isScannerVisible && hasPermission && (
        <Modal
        animationType="slide"
@@ -177,11 +182,9 @@ export default function Index() {
         }}/>
     </Modal>
     )}
-      
     </SafeAreaProvider>
   );
 }
-
 
 //Fetch Method for verification key
 async function getKey(){
@@ -194,21 +197,16 @@ async function getKey(){
   })
     .then(response => response.json())
     .then(data=>{
-      
-
       requestOptions = {
         method: 'GET',
         headers: {'Content-Type': 'application/json' ,
         credentials: 'include',
            'Authorization':data.oauth.token_type+" "+data.oauth.access_token,
-        
         },
         };
-
     })
     .catch(error => console.error('Error:', error));
 }
-
 
 //Fetch Method for data
 async function getData(){
@@ -221,22 +219,5 @@ await fetch("https://365.1@api.baubuddy.de/dev/index.php/v1/tasks/select/",reque
   //method to store data in local storage
   storeData(data);
     })
-    .catch(error => console.error('Error:', error));
-
-    
+    .catch(error => console.error('Error:', error)); 
 }
-
-
-
-
-//TO DO LIST
-
-//need to add if to check for network avalability and to check for server response
-//if server response is 200 then we can continue with the app, else load data from local storage
-
-//create qr code scanner
-
-//Solved
-//add local storage
-//create FlatList
-//create filter
